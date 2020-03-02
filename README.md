@@ -1,16 +1,21 @@
 # openapiLib
 
 本地下载代码运行  
-go.mod 中 replace openapiLib => ../openapiLib   
+go get github.com/wf42988/openapiLib  
+go.mod 中 replace openapiLib => ../openapiLib  
+import "openapiLib"
+
 git下载运行  
-go.mod 中  require github.com/wf42988/openapiLib 
+go.mod 中  
+require github.com/wf42988/openapiLib latest  
+import github.com/wf42988/openapiLib"   
 ```golang
 // openapiTest project main.go
 package main
 
 import (
     "encoding/json"
-	"fmt"
+    "fmt"
 	"openapiLib"
 	"strconv"
 	"time"
