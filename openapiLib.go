@@ -26,6 +26,15 @@ type OpenApiGatewayClient struct {
 	AccessKeySecret string
 }
 
+func process_url(url string) string {
+	final_url := url
+	last_str := url[len(url)-1 : len(url)]
+	if last_str != "/" {
+		final_url = final_url + "/"
+	}
+	return final_url
+}
+
 func signature(service string, para_dic map[string]string, ms int64, secret string) string {
 	keys := make([]string, 0, len(para_dic))
 	for key := range para_dic {
@@ -49,7 +58,7 @@ func signature(service string, para_dic map[string]string, ms int64, secret stri
 func doAction(requestId string, url string, service string, method string, paraDic map[string]string, accessKeyId string, secret string, access_token string) string {
 	ms := time.Now().Unix() * 1000
 	// var ms int64 = 1574141867043
-	url_final := url + service
+	url_final := process_url(url) + service
 	fina_para_dic := make(map[string]string)
 	fina_para_dic["action"] = method
 	fina_para_dic["version"] = "3.2.0"
@@ -121,7 +130,7 @@ func (openApiGatewayClient OpenApiGatewayClient) DoActionWithRequestId(requestId
 
 func (openApiGatewayClient OpenApiGatewayClient) GetTokenClientCredentials() string {
 	var r http.Request
-	url := openApiGatewayClient.ApiServerPath + "oauth/token"
+	url := process_url(openApiGatewayClient.ApiServerPath) + "oauth/token"
 	r.ParseForm()
 	r.Form.Add("grant_type", "client_credentials")
 	r.Form.Add("client_id", openApiGatewayClient.ClientId)
@@ -160,7 +169,7 @@ func (openApiGatewayClient OpenApiGatewayClient) GetTokenPassword(username strin
 	r.Form.Add("username", username)
 	r.Form.Add("password", password)
 	bodystr := strings.TrimSpace(r.Form.Encode())
-	url := openApiGatewayClient.ApiServerPath + "oauth/token"
+	url := process_url(openApiGatewayClient.ApiServerPath) + "oauth/token"
 	request, err := http.NewRequest("POST", url, strings.NewReader(bodystr)) //application/x-www-form-urlencoded
 	// request, err := http.NewRequest("POST", url_final+"/", strings.NewReader(string(bytesData)))
 	if err != nil {
@@ -193,7 +202,7 @@ func (openApiGatewayClient OpenApiGatewayClient) RefreshToken(refreshToken strin
 	r.Form.Add("client_id", openApiGatewayClient.ClientId)
 	r.Form.Add("client_secret", openApiGatewayClient.AccessKeyId)
 	bodystr := strings.TrimSpace(r.Form.Encode())
-	url := openApiGatewayClient.ApiServerPath + "oauth/token"
+	url := process_url(openApiGatewayClient.ApiServerPath) + "oauth/token"
 	request, err := http.NewRequest("POST", url, strings.NewReader(bodystr)) //application/x-www-form-urlencoded
 	// request, err := http.NewRequest("POST", url_final+"/", strings.NewReader(string(bytesData)))
 	if err != nil {
